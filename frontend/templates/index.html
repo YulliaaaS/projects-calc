@@ -1,25 +1,118 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DevOps Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Calculator Service</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 320px; }
-        h2 { color: #333; margin-bottom: 20px; }
-        input { width: 80%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; text-align: center; }
-        button { width: 88%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background: #0056b3; }
-        .result { margin-top: 20px; font-size: 20px; font-weight: bold; color: #28a745; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #eef6fc; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 35px 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 24px rgba(149, 180, 207, 0.2); 
+            text-align: center; 
+            width: 340px; 
+            border: 1px solid #d4e6f1;
+        }
+        .welcome-title { 
+            color: #2c3e50; 
+            font-size: 22px; 
+            margin-bottom: 6px; 
+            font-weight: 600;
+        }
+        .subtitle { 
+            color: #7f8c8d; 
+            font-size: 13px; 
+            margin-top: 0; 
+            margin-bottom: 24px; 
+        }
+        .input-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #5d6d7e;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 1px solid #a9cce3; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            box-sizing: border-box;
+            background-color: #fcfefd;
+            color: #2c3e50;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: #5499c7;
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: #5499c7; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            margin-top: 16px; 
+            transition: background-color 0.2s;
+        }
+        button:hover { 
+            background: #2980b9; 
+        }
+        .result { 
+            margin-top: 22px; 
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #1a5276; 
+            background: #ebf5fb;
+            min-height: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>🧮 Калькулятор</h2>
-        <input type="number" id="numA" placeholder="Число A" value="10">
-        <input type="number" id="numB" placeholder="Число B" value="20">
-        <button onclick="calculate()">Порахувати</button>
-        <div class="result" id="resultContainer"></div>
+        <h2 class="welcome-title">Welcome to Calculator</h2>
+        <p class="subtitle">Select an operation and enter numbers below</p>
+        
+        <div class="input-group">
+            <label for="operation">Operation</label>
+            <select id="operation">
+                <option value="add">Addition (+)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="numA">First Value (A)</label>
+            <input type="number" id="numA" placeholder="Enter number A" value="10">
+        </div>
+
+        <div class="input-group">
+            <label for="numB">Second Value (B)</label>
+            <input type="number" id="numB" placeholder="Enter number B" value="20">
+        </div>
+
+        <button onclick="calculate()">Calculate Result</button>
+        <div class="result" id="resultContainer">Ready for calculation</div>
     </div>
 
     <script>
@@ -27,19 +120,30 @@
             const a = document.getElementById('numA').value;
             const b = document.getElementById('numB').value;
             const resDiv = document.getElementById('resultContainer');
-            resDiv.innerText = "Обчислення...";
+            
+            if (a === "" || b === "") {
+                resDiv.innerText = "Please provide both numbers";
+                resDiv.style.color = "#c0392b";
+                return;
+            }
+
+            resDiv.style.color = "#1a5276";
+            resDiv.innerText = "Processing request...";
 
             try {
                 const response = await fetch(`/calculate?a=${a}&b=${b}`);
                 const data = await response.json();
                 
                 if (data.received_from_backend && data.received_from_backend.result !== undefined) {
-                    resDiv.innerText = `Результат: ${data.received_from_backend.result}`;
+                    resDiv.innerText = `Result: ${data.received_from_backend.result}`;
+                    resDiv.style.color = "#196f3d";
                 } else {
-                    resDiv.innerText = "Помилка обчислення";
+                    resDiv.innerText = "Calculation Error";
+                    resDiv.style.color = "#c0392b";
                 }
             } catch (err) {
-                resDiv.innerText = "Не вдалося з'єднатися з сервером";
+                resDiv.innerText = "Server connection failed";
+                resDiv.style.color = "#c0392b";
             }
         }
     </script>
