@@ -4,8 +4,8 @@ FROM python:3.10-slim
 # Вказуємо робочу папку всередині контейнера
 WORKDIR /app
 
-# Копіюємо файл коду в контейнер
-COPY main.py .
+# Копіюємо ВСІ файли та папки з папки frontend (включаючи templates/)
+COPY . .
 
 # Встановлюємо потрібні бібліотеки
 RUN pip install flask requests
