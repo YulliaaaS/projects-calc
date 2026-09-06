@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>DevOps Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 320px; }
+        h2 { color: #333; margin-bottom: 20px; }
+        input { width: 80%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; text-align: center; }
+        button { width: 88%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; font-size: 20px; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🧮 Калькулятор</h2>
+        <input type="number" id="numA" placeholder="Число A" value="10">
+        <input type="number" id="numB" placeholder="Число B" value="20">
+        <button onclick="calculate()">Порахувати</button>
+        <div class="result" id="resultContainer"></div>
+    </div>
+
+    <script>
+        async function calculate() {
+            const a = document.getElementById('numA').value;
+            const b = document.getElementById('numB').value;
+            const resDiv = document.getElementById('resultContainer');
+            resDiv.innerText = "Обчислення...";
+
+            try {
+                const response = await fetch(`/calculate?a=${a}&b=${b}`);
+                const data = await response.json();
+                
+                if (data.received_from_backend && data.received_from_backend.result !== undefined) {
+                    resDiv.innerText = `Результат: ${data.received_from_backend.result}`;
+                } else {
+                    resDiv.innerText = "Помилка обчислення";
+                }
+            } catch (err) {
+                resDiv.innerText = "Не вдалося з'єднатися з сервером";
+            }
+        }
+    </script>
+</body>
+</html>

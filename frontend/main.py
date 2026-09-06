@@ -9,6 +9,9 @@ app = Flask(__name__)
 import os
 #BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:5001/add") #це не було підключено
 BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5001/add") #це працювало
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('index.html')
 
 @app.route('/calculate', methods=['GET'])
 def calculate():
@@ -30,3 +33,6 @@ def calculate():
 if __name__ == '__main__':
     # Запускається на порту 5000
     app.run(host='0.0.0.0', port=5000)
+
+
+
